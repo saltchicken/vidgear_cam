@@ -1,0 +1,5 @@
+ffmpeg
+opencv-python
+vidgear
+pyzmq
+simplejpeg
