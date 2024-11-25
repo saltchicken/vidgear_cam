@@ -1,20 +1,22 @@
+from vidgear.gears import NetGear
 import cv2
-import socket
-import pickle
 
-# Setup socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind(('0.0.0.0', 5000))
+# Configure NetGear client with receive_mode enabled
+client = NetGear(address="0.0.0.0", port="5555", protocol="tcp", logging=True, receive_mode=True)
 
 while True:
-    data, _ = sock.recvfrom(65536)
-    frame = pickle.loads(data)
-
-    # Display frame
-    cv2.imshow('Video Stream', frame)
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    # Receive the frame from the server
+    frame = client.recv()
+    if frame is None:
         break
 
-cv2.destroyAllWindows()
-sock.close()
+    # processed_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+    # Display the frame
+    # print(processed_frame)
+    cv2.imshow("Received Stream", frame)
+    if cv2.waitKey(1) & 0xFF == ord("q"):
+        break
 
+# Release resources
+client.close()
+cv2.destroyAllWindows()
